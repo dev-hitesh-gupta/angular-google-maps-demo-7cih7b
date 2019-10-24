@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { MouseEvent } from '@agm/core';
-
+import {} from 'googlemaps';
+import {Observable} from 'rxjs';
 @Component({
   selector: 'my-app',
   templateUrl: './app.component.html',
@@ -34,8 +35,31 @@ export class AppComponent  {
       label: 'A',
       draggable: true
     };
+    this.getLocation().subscribe(res => {
+      console.log(res);
+    });
   }
   
+  getLocation(): Observable<any> {
+    let geocoder = new google.maps.Geocoder();
+    return Observable.create(observer => {
+        geocoder.geocode({
+            location:{
+              lat:this.marker.lat,
+              lng:this.marker.lng
+            }
+        }, (results, status) => {
+            if (status == google.maps.GeocoderStatus.OK) {
+                observer.next(results[0].formatted_address);
+                observer.complete();
+            } else {
+                console.log('Error: ', results, ' & Status: ', status);
+                observer.error();
+            }
+        });
+    });
+}
+
   marker: marker =   {
 		  lat: 51.673858,
 		  lng: 7.815982,
