@@ -1,0 +1,22 @@
+<h1>Angular Google Maps (AGM) Demo</h1>
+<p><a href="https://angular-maps.com/" target="_blank">Official Website</a></p>
+
+<agm-map 
+  [latitude]="lat"
+  [longitude]="lng"
+  [zoom]="zoom"
+  [disableDefaultUI]="false"
+  [zoomControl]="false"
+  (mapClick)="mapClicked($event)">
+
+  <agm-marker 
+      (markerClick)="clickedMarker(m.label, i)"
+      [latitude]="marker.lat"
+      [longitude]="marker.lng"
+      [label]="marker.label"
+      [markerDraggable]="marker.draggable"
+      (dragEnd)="markerDragEnd(m, $event)">
+
+  </agm-marker>
+
+</agm-map>
