@@ -1,6 +1,7 @@
 <h1>Angular Google Maps (AGM) Demo</h1>
 <p><a href="https://angular-maps.com/" target="_blank">Official Website</a></p>
-
+<input type='text' value="{{address}}" (change)="inputChange($event)"
+><button (click)="doMagic($event)">Submit</button>
 <agm-map 
   [latitude]="lat"
   [longitude]="lng"

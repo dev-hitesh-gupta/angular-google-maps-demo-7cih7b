@@ -14,7 +14,7 @@ export class AppComponent  {
   // initial center position for the map
   lat: number = 51.673858;
   lng: number = 7.815982;
-
+  address:string ;
   clickedMarker(label: string, index: number) {
     console.log(`clicked the marker: ${label || index}`)
   }
@@ -35,12 +35,27 @@ export class AppComponent  {
       label: 'A',
       draggable: true
     };
-    this.getLocation().subscribe(res => {
-      console.log(res);
+    this.getReverseLocation().subscribe(res => {
+      this.address = res;
     });
   }
-  
-  getLocation(): Observable<any> {
+  inputChange(address:any){
+    console.log(address.target.value);
+    this.address = address.target.value;
+  }
+  doMagic(){
+this.getLocation().subscribe(res => {
+  console.log(res);
+  this.address = res.formatted_address;
+       this.marker = {
+      lat: res.geometry.location.lat,
+      lng: res.geometry.location.lng,
+      label: 'A',
+      draggable: true
+    };
+    });
+  }
+  getReverseLocation(): Observable<any> {
     let geocoder = new google.maps.Geocoder();
     return Observable.create(observer => {
         geocoder.geocode({
@@ -51,6 +66,23 @@ export class AppComponent  {
         }, (results, status) => {
             if (status == google.maps.GeocoderStatus.OK) {
                 observer.next(results[0].formatted_address);
+                observer.complete();
+            } else {
+                console.log('Error: ', results, ' & Status: ', status);
+                observer.error();
+            }
+        });
+    });
+}
+
+getLocation(): Observable<any> {
+    let geocoder = new google.maps.Geocoder();
+    return Observable.create(observer => {
+        geocoder.geocode({
+            address:this.address
+        }, (results, status) => {
+            if (status == google.maps.GeocoderStatus.OK) {
+                observer.next(results[0]);
                 observer.complete();
             } else {
                 console.log('Error: ', results, ' & Status: ', status);
