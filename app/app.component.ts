@@ -12,47 +12,40 @@ export class AppComponent  {
   zoom: number = 8;
   
   // initial center position for the map
-  lat: number = 51.673858;
-  lng: number = 7.815982;
+  lat: number = 28.7040592;
+  lng: number = 7.10249019999992;
   address:string ;
+  lat_marker: number = 28.7040592;
+  lng_marker: number = 7.10249019999992;
   clickedMarker(label: string, index: number) {
     console.log(`clicked the marker: ${label || index}`)
   }
   
   mapClicked($event: MouseEvent) {
-    this.marker = {
-      lat: $event.coords.lat,
-      lng: $event.coords.lng,
-      label: 'A',
-      draggable: true
-    };
+      this.lat_marker= $event.coords.lat;
+       this.lng_marker= $event.coords.lng;
+     
   }
   
   markerDragEnd(m: marker, $event: MouseEvent) {
-    this.marker = {
-      lat: $event.coords.lat,
-      lng: $event.coords.lng,
-      label: 'A',
-      draggable: true
-    };
+      this.lat_marker= $event.coords.lat;
+      this.lng_marker= $event.coords.lng;
     this.getReverseLocation().subscribe(res => {
-      this.address = res;
+      this.address = res.formatted_address;
+      console.log(res);
     });
   }
   inputChange(address:any){
-    console.log(address.target.value);
     this.address = address.target.value;
   }
   doMagic(){
 this.getLocation().subscribe(res => {
   console.log(res);
-  this.address = res.formatted_address;
-       this.marker = {
-      lat: res.geometry.location.lat,
-      lng: res.geometry.location.lng,
-      label: 'A',
-      draggable: true
-    };
+            this.address = res.formatted_address;
+             this.lat_marker= res.geometry.location.lat();
+             this.lng_marker= res.geometry.location.lng();
+    console.log(this.lat_marker);
+ 
     });
   }
   getReverseLocation(): Observable<any> {
@@ -60,12 +53,12 @@ this.getLocation().subscribe(res => {
     return Observable.create(observer => {
         geocoder.geocode({
             location:{
-              lat:this.marker.lat,
-              lng:this.marker.lng
+              lat:this.lat_marker,
+              lng:this.lng_marker
             }
         }, (results, status) => {
             if (status == google.maps.GeocoderStatus.OK) {
-                observer.next(results[0].formatted_address);
+                observer.next(results[0]);
                 observer.complete();
             } else {
                 console.log('Error: ', results, ' & Status: ', status);
